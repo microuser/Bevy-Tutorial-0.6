@@ -1,16 +1,21 @@
 #![allow(clippy::redundant_field_names)]
 use bevy::{prelude::*, render::camera::ScalingMode};
-//use bevy::DefaultPlugins;
+//use bevy::window::WindowMode;
 
+pub const ASPECT_RATIO: f32 = 16.0 / 9.0;
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
-pub const ASPECTRATIO: f32 = 16.0 / 9.0;
 pub const TILE_SIZE: f32 = 0.1;
+
+#[derive(Component)]
+pub struct AsciiSheet(pub Handle<TextureAtlas>);
 
 mod player;
 mod debug;
+mod ascii;
 
 use player::PlayerPlugin; //contained in file: player.rs
 use debug::DebugPlugin;
+use ascii::AsciiPlugin;
 fn main() {
     /*
      * Overview: of sprite loading using atlas
@@ -24,7 +29,7 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(CLEAR))
         .insert_resource(WindowDescriptor {
-            width: height * ASPECTRATIO,
+            width: height * ASPECT_RATIO,
             height: height,
             title: "Bevy Tutorial".to_string(),
             resizable: true,
@@ -33,10 +38,10 @@ fn main() {
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
-        .add_startup_system(spawn_camera)
         .add_plugin(PlayerPlugin)
-        .add_plugins(DebugPlugin)
-        .add_startup_system_to_stage(StartupStage::PreStartup, load_ascii)
+        .add_plugin(AsciiPlugin)
+        .add_plugin(DebugPlugin)
+        .add_startup_system(spawn_camera)
         .run();
 }
 
@@ -45,30 +50,10 @@ fn spawn_camera(mut commands: Commands) {
     camera.orthographic_projection.top = 1.0;
     camera.orthographic_projection.bottom = -1.0;
 
-    camera.orthographic_projection.right = 1.0 * ASPECTRATIO;
-    camera.orthographic_projection.left = -1.0 * ASPECTRATIO;
+    camera.orthographic_projection.right = 1.0 * ASPECT_RATIO;
+    camera.orthographic_projection.left = -1.0 * ASPECT_RATIO;
 
     camera.orthographic_projection.scaling_mode = ScalingMode::None; //pixel art
 
     commands.spawn_bundle(camera);
-}
-
-struct AsciiSheet(Handle<TextureAtlas>);
-
-fn load_ascii(
-    mut commands: Commands,
-    assets: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>) {
-        let image = assets.load("Ascii.png");
-        let atlas = TextureAtlas::from_grid_with_padding(
-            image,
-            Vec2::splat(9.0),
-            16,
-            16,
-            Vec2::splat(2.0)
-            );
-        //note: sprite sheet ascii with padding.
-        let atlas_handle = texture_atlases.add(atlas);
-        commands.insert_resource(AsciiSheet(atlas_handle));
-
 }

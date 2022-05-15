@@ -1,40 +1,21 @@
 use bevy::prelude::*;
-use bevy_inspector_egui::Inspectable;
+
 use crate::AsciiSheet;
 use crate::TILE_SIZE;
 
-pub struct PlayerPlugin{}
-#[derive(Component, Inspectable)]
+#[derive(Component)]
  pub struct Player{
     speed: f32
 }
+
+#[derive(Component, Default)]
+pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
         .add_startup_system(spawn_player)
         .add_system(player_movement);
-    }
-}
-
-fn player_movement(
-    player_query: Query<(&Player, &mut Transform)>,
-    keyboard: Res<Input<KeyCode>>,
-    time: Res<Time>
-){
-    //WARNING, dont let this get to zero: Query Single Error? self.get_single_mut().unwrap()
-    let (player, mut transform) = player_query.single_mut();
-    if keyboard.pressed(KeyCode::W){
-        transform.translation.y += player.speed * TILE_SIZE * time.delta_seconds();
-    }
-    if keyboard.pressed(KeyCode::S){
-        transform.translation.y -= player.speed * TILE_SIZE * time.delta_seconds();
-    }
-    if keyboard.pressed(KeyCode::A){
-        transform.translation.x += player.speed * TILE_SIZE * time.delta_seconds();
-    }
-    if keyboard.pressed(KeyCode::D){
-        transform.translation.x -= player.speed * TILE_SIZE * time.delta_seconds();
     }
 }
 
@@ -75,5 +56,26 @@ fn spawn_player(mut commands: Commands, ascii: Res<AsciiSheet>) {
             .insert(Name::new("Background"))
             .id(); //gets entity after creation
         commands.entity(player).push_children(&[background]);
+    }
+}
+
+fn player_movement(
+    mut player_query: Query<(&Player, &mut Transform)>,
+    keyboard: Res<Input<KeyCode>>,
+    time: Res<Time>
+){
+    //WARNING, dont let this get to zero: Query Single Error? self.get_single_mut().unwrap()
+    let ( player, mut transform) = player_query.single_mut();
+    if keyboard.pressed(KeyCode::W){
+        transform.translation.y += player.speed * TILE_SIZE * time.delta_seconds();
+    }
+    if keyboard.pressed(KeyCode::S){
+        transform.translation.y -= player.speed * TILE_SIZE * time.delta_seconds();
+    }
+    if keyboard.pressed(KeyCode::A){
+        transform.translation.x += player.speed * TILE_SIZE * time.delta_seconds();
+    }
+    if keyboard.pressed(KeyCode::D){
+        transform.translation.x -= player.speed * TILE_SIZE * time.delta_seconds();
     }
 }

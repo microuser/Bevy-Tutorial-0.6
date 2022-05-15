@@ -10,6 +10,12 @@ opt-level = 1
 opt-level = 3 
 
 [dependencies]
-#bevy = { version = "0.6", features = ["dynamic"] }
-bevy = { version = "0.6"}
+
+## NOTE Remote dynamic feature for release builds (toggle with #)
+bevy = { version = "0.6", features = ["dynamic"] }
+#bevy = { version = "0.6", features = [] }
+
+
+
+#bevy = { version = "0.6"}
 bevy-inspector-egui = { version = "0.8"} 
