@@ -60,11 +60,16 @@ fn spawn_player(mut commands: Commands, ascii: Res<AsciiSheet>) {
 }
 
 fn player_movement(
+    //#observe the tuple parenthesis nested in the query
     mut player_query: Query<(&Player, &mut Transform)>,
+
     keyboard: Res<Input<KeyCode>>,
     time: Res<Time>
 ){
     //WARNING, dont let this get to zero: Query Single Error? self.get_single_mut().unwrap()
+    //Constant speed is achieved using bevy's delta_seconds()
+    //TILE_SIZE allows scaling speed relative to world.
+
     let ( player, mut transform) = player_query.single_mut();
     if keyboard.pressed(KeyCode::W){
         transform.translation.y += player.speed * TILE_SIZE * time.delta_seconds();

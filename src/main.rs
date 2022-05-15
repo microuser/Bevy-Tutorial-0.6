@@ -38,9 +38,9 @@ fn main() {
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
-        .add_plugin(PlayerPlugin)
         .add_plugin(AsciiPlugin)
         .add_plugin(DebugPlugin)
+        //.add_plugin(PlayerPlugin)
         .add_startup_system(spawn_camera)
         .run();
 }
