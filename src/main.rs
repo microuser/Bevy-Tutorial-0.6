@@ -1,4 +1,5 @@
 #![allow(clippy::redundant_field_names)]
+#![allow(clippy::too_many_arguments)]
 use bevy::{prelude::*, render::camera::ScalingMode};
 
 pub const ASPECT_RATIO: f32 = 16.0 / 9.0;
